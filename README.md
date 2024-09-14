@@ -42,6 +42,8 @@ You’ll note that these tasks are ones anyone could tell you that large languag
 
 我发现最好的译文出现在 alternatives，但某些机器上相同文本出现在 data，排序不同，原因未知。我认为一次只翻译一段有助于缓解问题。
 
+以下是[原项目](https://github.com/ifyour/deeplx-js/tree/main) README。
+
 ----
 
 ⚡️ DeepLX API npm package.
