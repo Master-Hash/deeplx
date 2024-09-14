@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
-import { query } from './query';
-import { RequestParams } from './types';
+import { query } from './query.js';
+import { RequestParams } from './types.js';
 
 const app = new Hono();
 
@@ -16,7 +16,7 @@ app.post('/translate', async c => {
   let params: RequestParams;
   try {
     params = await c.req.json();
-  } catch (error) {}
+  } catch (error) { }
   // @ts-ignore
   return c.json(await query(params));
 });

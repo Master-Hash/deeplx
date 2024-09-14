@@ -1,4 +1,4 @@
-import { SUPPORTED_LANGUAGES } from './const';
+import { SUPPORTED_LANGUAGES } from './const.js';
 
 type Lang = typeof SUPPORTED_LANGUAGES[number];
 export type SourceLang = Lang | 'auto';

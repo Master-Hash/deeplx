@@ -1,5 +1,6 @@
 {
   "name": "@ifyour/deeplx",
+  "type": "module",
   "version": "0.1.17",
   "author": "ifyour",
   "module": "dist/deeplx.esm.js",
@@ -16,7 +17,8 @@
   "scripts": {
     "dev": "bun --watch ./src/devServer.ts",
     "test": "tsdx test",
-    "build": "tsdx build",
+    "build": "tsup src/index.ts --minify --treeshake --format esm",
+    "build-deno": "tsup deno.ts --minify --treeshake --format esm",
     "start": "tsdx watch",
     "lint": "tsdx lint",
     "lintfix": "tsdx lint --fix",
@@ -24,7 +26,6 @@
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
-  "peerDependencies": {},
   "husky": {
     "hooks": {
       "pre-commit": "tsdx lint"
@@ -47,13 +48,15 @@
     }
   ],
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^10.0.2",
-    "hono": "^3.9.2",
-    "husky": "^8.0.3",
+    "@size-limit/preset-small-lib": "^11.1.5",
+    "hono": "^4.6.1",
+    "husky": "^9.1.6",
     "jest-fetch-mock": "^3.0.3",
-    "size-limit": "^10.0.2",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.6.2",
-    "typescript": "^4.2.2"
-  }
+    "size-limit": "^11.1.5",
+    "terser": "^5.32.0",
+    "tslib": "^2.7.0",
+    "tsup": "^8.2.4",
+    "typescript": "^5.6.2"
+  },
+  "packageManager": "pnpm@9.10.0"
 }
