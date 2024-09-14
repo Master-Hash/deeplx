@@ -1,0 +1,36 @@
+services:
+  deeplx:
+    image: denoland/deno:2.0.0-rc.2
+    restart: unless-stopped
+    # ports:
+    # - "1188:1188"
+    command:
+      [
+        'deno',
+        'run',
+        '--allow-net=0.0.0.0:1188,api.deepl.com,www2.deepl.com',
+        '/deno.js',
+      ]
+    volumes:
+      - ./deno.js:/deno.js
+    networks:
+      - deeplx-net
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command:
+      [
+        'tunnel',
+        '--no-autoupdate',
+        'run',
+        '--token',
+        '«your-own-token»',
+      ]
+    depends_on:
+      - deeplx
+    networks:
+      - deeplx-net
+
+networks:
+  deeplx-net:
