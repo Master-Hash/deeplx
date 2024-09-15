@@ -23,11 +23,15 @@ function buildRequestParams(sourceLang = 'auto', targetLang = 'en') {
   };
 }
 
+// const enSentenceSegmenter = new Intl.Segmenter("en-US", {granularity: "sentence"})
+
 function buildProRequestParams(sourceLang = 'auto', targetLang = 'en') {
   const regionalVariantFlag = new Map([
     ['EN', 'en-US'],
     ['ZH', 'zh-Hans'],
   ]);
+  // const segmenter = sourceLang?.toUpperCase() === "EN" ? enSentenceSegmenter : new Intl.Segmenter(sourceLang.toLowerCase(), {granularity: "sentence"});
+
   return {
     jsonrpc: '2.0',
     method: 'LMT_handle_jobs',
@@ -90,21 +94,31 @@ function buildRequestBody(data: RequestParams) {
 
 function buildProRequestBody(data: RequestParams) {
   const requestData = buildProRequestParams(data.source_lang, data.target_lang);
-  requestData.params.jobs = [
-    {
-      kind: 'default',
+  const paragraphs = data.text.split("\n");
+
+  const jobs = [];
+  for (let i = 0; i < paragraphs.length; i++) {
+    jobs.push({
+      kind: "default",
       sentences: [
         {
-          text: data.text,
-          id: 1,
-          prefix: '',
+          text: paragraphs[i],
+          id: i + 1,
+          prefix: "",
         },
       ],
-      raw_en_context_before: [],
-      raw_en_context_after: [],
-      preferred_num_beams: 4,
-    },
-  ];
+      raw_en_context_before: [
+        paragraphs[i - 2],
+        paragraphs[i - 1],
+      ].filter(Boolean),
+      raw_en_context_after: [
+        paragraphs[i + 1]
+      ].filter(Boolean),
+      preferred_num_beams: 1,
+    });
+  }
+
+  requestData.params.jobs = jobs;
   requestData.params.timestamp = getTimestamp(countLetterI(data.text));
 
   let requestString = JSON.stringify(requestData);
@@ -125,7 +139,7 @@ type RawProResponseParams = {
   id: number;
   result: {
     translations: Array<{
-      beams: { sentences: { text: string; ids: number[] }[] }[];
+      beams: { sentences: { text: string; ids: number[]; }[]; }[];
       quality: string;
     }>;
     target_lang: string;
@@ -164,20 +178,27 @@ async function query(
   if (response.ok) {
     if (config?.customHeader && config?.customHeader['Cookie']) {
       const { result } = (await response.json()) as RawProResponseParams;
+      // console.log(result.translations);
       const translations = result && result.translations;
       if (
         translations &&
         translations.length > 0 &&
         translations[0].beams.length > 0
       ) {
-        const texts = translations[0].beams.flatMap(beam =>
-          beam.sentences.map(sentence => sentence.text)
+        // const texts = translations[0].beams.flatMap((beam) =>
+        //   beam.sentences.map((sentence) => sentence.text)
+        // );
+        // I don't know if there're more than one beams or sentences
+        // Will fix it if something goes wrong
+        const texts = translations.map(({ beams }) =>
+          beams[0].sentences[0].text
         );
         return {
           code: 200,
           message: 'success',
-          data: texts[0],
-          alternatives: texts.slice(1), // 返回剩余的备用翻译
+          // data: texts[0],
+          data: texts.join("\n")
+          // alternatives: texts.slice(1), // 返回剩余的备用翻译
         };
       } else {
         return {
@@ -194,7 +215,7 @@ async function query(
         data: result?.texts?.[0]?.text,
         source_lang: params?.source_lang || result?.lang || 'auto',
         target_lang: params?.target_lang || 'en',
-        alternatives: result.texts?.[0]?.alternatives?.map?.(item => item.text),
+        // alternatives: result.texts?.[0]?.alternatives?.map?.(item => item.text),
       };
     }
   } else {

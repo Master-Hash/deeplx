@@ -1,6 +1,5 @@
-
 import { Hono } from "hono";
-import { query } from "./dist/index.js";
+import { query } from "./src/index.js";
 // import { env, getRuntimeKey } from 'hono/adapter'
 import type { StatusCode } from "hono/utils/http-status";
 

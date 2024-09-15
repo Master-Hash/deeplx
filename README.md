@@ -5,19 +5,19 @@
 * 改为用 tsup 而非 tsdx 打包。
 * 包管理改为 pnpm。
 * 支持 DeepLX Pro API，并调用[新模型](https://www.deepl.com/zh/blog/next-gen-language-model)。
+* Pro API 在内部切分段落，发送给 DeepL 服务器，并合并返回，以缓解单段篇幅过长带来的幻觉。
 * 为便于朋友部署，起了 deno 服务和 compose 配置。
 
 以下可以做，但是不太有心情：
 
 * 支持富文本翻译。这主要取决于沉浸式翻译是否愿意支持。
-* 支持段落切分。
 * 支持 quality: fast
 
 需要注意，[某实现](https://github.com/xiaozhou26/deeplx-pro)的 quality: fast 实际已经损坏，响应的结果是缩略版原文，并没有译出。 ~~你就说快不快吧~~
 
 以下是已知问题：
 
-* 标准 DeepLX 汉语译文用全角标点而新模型用半角标点，这是官方前端也有的问题。
+* 标准 DeepLX 汉语译文用全角标点而新模型用半角标点，汉字和字母间也没有盘古来开空辟格。这是官方前端也有的问题。
 * 如果文本过长，译文可能为非常精炼的词汇或者词汇重复很多遍。谷歌翻译抽风的历史已经为人们熟知（[1](https://www.vice.com/en/article/why-is-google-translate-spitting-out-sinister-religious-prophecies/)，[2](https://news.ycombinator.com/item?id=41335352)），但仅限于无意义的文本输入，而本模型的错误在完全正确仅仅长度略长的文本中即可抽风。官方不存在此问题是因为会预先分句，每段并不长，而整体请求、\n 分段是 DeepLX 通用的方式。缓解办法仅为设置请求长度为2000字符以内。[某实现](https://github.com/xiaozhou26/deeplx-pro)亦受影响。
 * 脚注等符号多、格式刻板的文本，也会形成简短而怪异的响应。
 * 许多文本翻译怪异，质量甚至不如普通模型。例如以下文本（[出处](https://tommorris.org/posts/2024/lies-damn-lies-and-business-cases-for-ai-hype/)）：
