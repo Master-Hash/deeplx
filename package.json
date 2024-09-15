@@ -22,7 +22,6 @@
     "start": "tsdx watch",
     "lint": "tsdx lint",
     "lintfix": "tsdx lint --fix",
-    "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
