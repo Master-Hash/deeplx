@@ -5,7 +5,7 @@
 * 改为用 tsup 而非 tsdx 打包。
 * 包管理改为 pnpm。
 * 支持 DeepLX Pro API，并调用[新模型](https://www.deepl.com/zh/blog/next-gen-language-model)。
-* DeepLX Pro API 在内部切分段落，发送给 DeepL 服务器，并合并返回，以缓解单段篇幅过长带来的幻觉。
+* DeepLX Pro API 在内部切分段落，发送给 DeepL 服务器，并合并返回，试图缓解单段篇幅过长带来的幻觉但并无效果。
 * 为便于朋友部署，起了 deno 服务和 compose 配置。
 
 以下可以做，但是不太有心情：
@@ -40,7 +40,7 @@ You’ll note that these tasks are ones anyone could tell you that large languag
 
 </details></p>
 
-我发现最好的译文出现在 alternatives，但如果一次只翻译一段，就会排在优先级最高的 data 字段。在启用段落切分前，一次请求3段能得到合理的结果；启用后，最多可以一次翻译6段。
+我发现最好的译文出现在 alternatives，但如果一次只翻译一段，就会排在优先级最高的 data 字段。我们认为段落切分前后最大允许的段落都是6段，切分并没有效果。
 
 以下是[原项目](https://github.com/ifyour/deeplx-js/tree/main) README。
 
